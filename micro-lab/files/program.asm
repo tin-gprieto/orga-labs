@@ -8,5 +8,8 @@ siguiente:
 ADD R0, R1
 JC siguiente
 
+prueba:
+SIG R0
+
 halt:
 JMP halt

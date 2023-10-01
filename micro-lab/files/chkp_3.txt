@@ -3,3 +3,11 @@
           |04| SET R1 , 0x11
 siguiente |06| ADD R0 , R1
           |08| JC siguiente
+   prueba |0a| SIG R0
+
+48 
+00
+
+01001 000 00000000
+ 09    0
+SIG   R0
