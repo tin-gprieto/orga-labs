@@ -20,15 +20,15 @@ outputs
 
 ### b) Las entradas input bit y en input bit sirven para poder introducir en el circuito un valor arbitrario. Escribir una secuencia de activación y desactivación de entradas para que el registro R1 pase a tener el valor 1
 
-    w_1 , en_input_bit, input_bit, clk
+    input_bit en_input_bit w_1  
 
 ### c) Dar una secuencia de activaciones que inicialmente ponga un valor arbitrario en R0 (suponer para un valor y luego generalizarlo), luego que este valor se transfiera a R1, luego que el valor de R2 pase a R0 y finalmente el valor de R1 a R2
 
     (en_input_bit) --> si es que el valor llegar del input bit
-    w_0 , clk  // inicializa el registro 0
-    en_out_0 , w1 , clk // pasa R0 -> R1
-    en_out_2 , w0 , clk // pasa R2 -> R0
-    en_out_1 , w2 , clk // pasa R1 -> R2
+    w_0             ; inicializa el registro 0
+    en_out_0  w1    ; pasa R0 -> R1
+    en_out_2  w0    ; pasa R2 -> R0
+    en_out_1  w2    ; pasa R1 -> R2
 
 -------------------------
 
@@ -131,5 +131,18 @@ Por lo tanto, se realizan 3 operaciones (6 ciclos  de clock) para llegar a ***si
 - En este caso nunca se puede llegar a halt ya que no se la asigna a la memoria de ejecución
 
 #### d) ¿Cuántas microinstrucciones son necesarias para realizar el ADD? ¿Cuántas para el salto?
+
+Para realizar ADD se requieren 12 microinstrucciones distribuidads en 5 ciclos de clock:
+
+    RB_enOut  ALU_enA  RB_selectIndexOut=0
+    RB_enOut  ALU_enB  RB_selectIndexOut=1
+    ALU_OP=ADD ALU_opW
+    RB_enIn   ALU_enOut RB_selectIndexIn=0
+    reset_microOp
+
+En cambio para el salto (JMP) se necesitan tan solo 3 microinstrucciones en 2 ciclos de clock:
+
+    PC_load DE_enOutImm
+    reset_microOp
 
 -------------------------
