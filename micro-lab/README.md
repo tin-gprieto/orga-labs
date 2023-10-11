@@ -74,7 +74,7 @@ FALTA
 
 ### output
 
-    a0
+    a0 
     02
     f8
     ff
@@ -84,33 +84,42 @@ FALTA
     20
     a8
     06
+    a0
+    0a
 
 ### Preguntas
 
 #### b) ¿Qué lugar ocupará cada instrucción en la memoria? Detallar por qué valor se reemplazarán las etiquetas
 
-|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |
-|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
-|    a0    |    02    |    f8    |    ff    |    f9    |    11    |    08    |    20    |    a8    |    06    |
-|   JMP    | seguir   |  SET R0  |   0xFF   |  SET R1  |   0X11   |  ADD R0  |    R1    |    JC    |siguiente |
+|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |    11    |    12    |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|    a0    |    02    |    f8    |    ff    |    f9    |    11    |    08    |    20    |    a8    |    06    |    a0    |    0a    |
+|   JMP    | seguir   |  SET R0  |   0xFF   |  SET R1  |   0X11   |  ADD R0  |    R1    |    JC    |siguiente |   JMP    |    halt   |
 
 Como la memoria tiene un tamaño de palabra de 8 bits, cada instrucción ocupara 2 espacios de memoria. El valor de las etiquetas es la dirección de memoria que apunta a la ultima parte de la instrucción anterior a la etiqueta.
 
 ##### seguir
 
-|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |
-|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
-|    a0    |    **02**    |    f8    |    ff    |    f9    |    11    |    08    |    20    |    a8    |    06    |
-|   JMP    | **seguir**   |  SET R0  |   0xFF   |  SET R1  |   0X11   |  ADD R0  |    R1    |    JC    |siguiente |
+|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |    11    |    12    |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|    a0    |    **02**    |    f8    |    ff    |    f9    |    11    |    08    |    20    |    a8    |    06    |    a0    |    0a    |
+|   JMP    | **seguir**   |  SET R0  |   0xFF   |  SET R1  |   0X11   |  ADD R0  |    R1    |    JC    |siguiente |   JMP    |    halt   |
 
 ##### siguiente
 
-|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |
-|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
-|    a0    |    02    |    f8    |    ff    |    f9    |    **11**    |    08    |    20    |    a8    |    06    |
-|   JMP    | seguir   |  SET R0  |   0xFF   |  SET R1  |   **0X11**   |  ADD R0  |    R1    |    JC    |siguiente |
+|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |    11    |    12    |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|    a0    |    02    |    f8    |    ff    |    f9    |    **11**    |    08    |    20    |    a8    |    06    |    a0    |    0a    |
+|   JMP    | seguir   |  SET R0  |   0xFF   |  SET R1  |   **0X11**   |  ADD R0  |    R1    |    JC    |siguiente |   JMP    |    halt   |
 
-Quedando asi **seguir** con la posicion 0x02 y **siguiente** con la posicion 0x06.
+##### halt
+
+|    01    |    02    |    03    |    04    |    05    |    06    |    07    |    08    |    09    |    10    |    11    |    12    |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|    a0    |    02    |    f8    |    ff    |    f9    |    11    |    08    |    20    |    a8    |    **06**    |    a0    |    0a    |
+|   JMP    | seguir   |  SET R0  |   0xFF   |  SET R1  |   0X11   |  ADD R0  |    R1    |    JC    | **siguiente** |   JMP    |    halt   |
+
+Quedando asi **seguir** con la posicion 0x02 (2), **siguiente** con la posicion 0x06 (6), y **halt** con la posicion 0x0a (10).
 
 #### c) Ejecutar y controlar ¿cuántos ciclos de clock son necesarios para que este código llegue a la instrucción JMP halt?
 
