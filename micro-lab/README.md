@@ -52,11 +52,11 @@ Se pueden almacenar 128 instrucciones ya que tienen el doble de tamaño que las 
 
 #### a) PC (Contador de Programa): ¿Qué función cumple la señal inc?
 
-La señal ***PC_inc***, (si tiene valor 1) avanza a la siguiente posicion de memoria donde se ubican las instrucciones.
+La señal ***PC_inc***, (si tiene valor 1) incremeta el valor actual de PC en uno.
 
 #### b) ALU (Unidad Aritmético Lógica): ¿Qué función cumple la señal opW?
 
-La señal ***ALU_opW*** indica si se deben tener en cuenta los flags al realizar la operacion.
+La señal ***ALU_opW*** habilita la escritura de los flags al realizar la operacion.
 
 #### c) microOrgaSmall (DataPath): ¿Para qué sirve la señal DE enOutImm? ¿Qué parte del circuito indica que registro se va a leer y escribir?
 
@@ -64,9 +64,39 @@ La señal ***DE_enOutImm*** sirve para habilitar la entrada al bus de un valor i
 
 #### d) ControlUnit (Unidad de control): ¿Cómo se resuelven los saltos condicionales? Describir el mecanismo
 
-Para resolver los saltos condicionales se utilizan
+Los saltos condicionales son instrucciones que permiten cambiar el flujo de un programa de acuerdo con una condicion especifica. 
+Pueden utilizarse para salir de un ciclo o cambiar el flujo de un programa en función de una condicion dada.
 
-FALTA
+JUMP utiliza una dirección de memoria o una ubicación especifica en el programa para saber donde saltar. 
+La computadora no comprende etiquetas, sino que utiliza direcciones de memoria 
+para localizar la ubicación de la proxima instrucción a ejecutar.
+
+instrucciones de un salto condicional:
+1. Lectura de la instruccion en la direccion indicada por el PC (Program Counter)
+2. Se decodifica la instruccion para verificar la condicion especificada
+3. Se evalua la condicion segun los valores almacenados y el estado del programa
+4. Evalua si hacer el salto, de no cumplirse la condicion se continua con la siguiente secuencialmente
+5. Si se hace el salto se continua ejecutando segun la nueva direccion de memoria
+5b. De no cumplirse la condicion se sigue con el flujo del programa 
+
+un ejemplo seria:
+
+while a < 7 entonces:
+    a = a + 1
+    instruccion x
+    instruccion y
+termina while
+
+direccion       programa            //Direccion del programa
+                SET R0, 1           //Asignacion de valores
+                SET R1, 7           
+yyyyyyyy        CMP R3, R1          //Asignacion de memoria a la instruccion comparar
+                JMP, xxxxxxxx       //Si se cumple, se sale del ciclo hacia otra etiqueta
+                ADD R0, R3          //De no cumplirse se continua con el programa (while)
+                instruccion x       //Se ejecutan las instrucciones necesarias
+                instruccion y
+                JMP yyyyyyyy        //Se regresa a la etiqueta y se compara nuevamente
+xxxxxxxx
 
 -------------------------
 
@@ -137,7 +167,36 @@ Quedando asi **seguir** con la posicion 0x02 (2), **siguiente** con la posicion 
 
 Por lo tanto, se realizan 3 operaciones (6 ciclos  de clock) para llegar a ***siguiente*** y luego esta se realiza 2 veces (con un tamaño es de 2 operaciones), por lo tanto se realiza en un total de 14 ciclos de clock para llegar a ***halt***.  
 
-- En este caso nunca se puede llegar a halt ya que no se la asigna a la memoria de ejecución
+- En este caso nunca se puede llegar a halt ya que no se la asigna a la memoria de ejecución.
+
+En primer lugar para conocer la cantidad de clocks necesarios, debemos partir de la base de que cada instrucción comienza con un fetch, el cual requiere 6 clocks (especificado en microCode.ops). A su vez cada instrucción despues de realizarse tiene el reset_microOP que hace que el contador vuelva a 0 para volver a iniciar el fetch de la siguiente.
+
+En el conteo de clocks para cada operación ya vamos a estar incluyendo el reset_microOP.
+
+En este caso particular, contamos con 3 instrucciones antes de llegar al ciclo, estas son:
+
+    JMP ---> toma dos clocks + 6 del fetch = 8
+    SET ---> toma dos clocks + 6 del fetch = 8 y a su vez como son dos SET sería 16 clocks ambos 
+
+Sumando hasta acá tenemos 24.
+
+Luego entramos al ciclo
+
+En el cuerpo del ciclo tenemos dos intrucciones:
+
+    ADD ---> Toma 5 clocks + 6 del fetch = 11 clocks
+    JC  ---> Requiere 4 clocks + 6 del fetch = 10 
+
+Luego volvemos a entrar al ciclo:
+
+    ADD ---> Toma 5 clocks + 6 del fetch = 11 clocks
+
+Y en este caso no se realiza la instrucción JC. 
+
+Si sumamos = 24 + 21 + 11 = 56.
+
+Esta es la cantidad de clocks que toma realizar el código.
+
 
 #### d) ¿Cuántas microinstrucciones son necesarias para realizar el ADD? ¿Cuántas para el salto?
 
